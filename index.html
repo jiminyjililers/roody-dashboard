@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roody v2 — Daily Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f8fa;
+    --white: #ffffff;
+    --border: #dfe3eb;
+    --border-light: #eaf0f6;
+    --blue: #0091ae;
+    --blue-dark: #00718a;
+    --blue-light: #e5f5f8;
+    --orange: #ff7a59;
+    --orange-light: #fff1ee;
+    --green: #00bda5;
+    --green-light: #e5f8f6;
+    --red: #f2545b;
+    --red-light: #fdecea;
+    --text: #33475b;
+    --text-light: #516f90;
+    --text-muted: #7c98b6;
+    --shadow: 0 1px 4px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.05);
+    --shadow-hover: 0 4px 12px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.05);
+    --radius: 6px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Lexend', -apple-system, sans-serif; font-size: 14px; min-height: 100vh; }
+
+  .topbar { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+  .topbar-left { display: flex; align-items: center; gap: 16px; }
+  .logo { font-size: 16px; font-weight: 700; color: var(--blue); }
+  .divider { width: 1px; height: 20px; background: var(--border); }
+  .page-title { font-size: 14px; font-weight: 600; color: var(--text); }
+  .topbar-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+  .date-controls { display: flex; align-items: center; gap: 4px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 4px 8px; }
+  .date-btn { background: none; border: none; color: var(--text-light); font-family: 'Lexend', sans-serif; font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 4px; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .date-btn:hover { background: var(--white); color: var(--blue); }
+  .date-btn.active { background: var(--white); color: var(--blue); font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  .date-sep { color: var(--border); font-size: 14px; padding: 0 2px; }
+  input[type="date"] { background: var(--white); border: 1px solid var(--border); border-radius: 4px; color: var(--text); font-family: 'Lexend', sans-serif; font-size: 12px; padding: 4px 8px; cursor: pointer; outline: none; transition: border-color 0.15s; }
+  input[type="date"]:focus { border-color: var(--blue); }
+
+  .status-pill { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-light); background: var(--bg); border: 1px solid var(--border); padding: 4px 10px; border-radius: 20px; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-muted); flex-shrink: 0; }
+  .dot.live { background: var(--green); }
+  .dot.loading { background: var(--orange); animation: blink 1s infinite; }
+  .dot.error { background: var(--red); }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  .refresh-btn { background: var(--white); border: 1px solid var(--border); color: var(--text); font-family: 'Lexend', sans-serif; font-size: 12px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius); cursor: pointer; transition: all 0.15s; }
+  .refresh-btn:hover { background: var(--bg); border-color: var(--blue); color: var(--blue); }
+  .refresh-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .viewing-banner { background: var(--blue-light); border-bottom: 1px solid #b3dde5; padding: 8px 24px; font-size: 12px; color: var(--blue-dark); font-weight: 500; display: none; }
+  .viewing-banner.show { display: block; }
+
+  .main { padding: 24px; max-width: 1440px; margin: 0 auto; }
+  .section-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 12px; margin-top: 24px; }
+  .section-label:first-child { margin-top: 0; }
+
+  .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 4px; }
+  .kpi-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); transition: box-shadow 0.2s, opacity 0.3s, transform 0.3s; opacity: 0; transform: translateY(6px); position: relative; overflow: hidden; }
+  .kpi-card.loaded { opacity: 1; transform: translateY(0); }
+  .kpi-card:hover { box-shadow: var(--shadow-hover); }
+  .kpi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--border); border-radius: var(--radius) var(--radius) 0 0; }
+  .kpi-card.blue::before { background: var(--blue); }
+  .kpi-card.orange::before { background: var(--orange); }
+  .kpi-card.green::before { background: var(--green); }
+  .kpi-icon { width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; margin-bottom: 12px; background: var(--blue-light); }
+  .kpi-card.orange .kpi-icon { background: var(--orange-light); }
+  .kpi-card.green .kpi-icon { background: var(--green-light); }
+  .kpi-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .kpi-value { font-size: 26px; font-weight: 700; color: var(--text); letter-spacing: -0.5px; line-height: 1; margin-bottom: 4px; font-variant-numeric: tabular-nums; }
+  .kpi-value.blue { color: var(--blue); }
+  .kpi-value.orange { color: var(--orange); }
+  .kpi-value.green { color: var(--green); }
+  .kpi-sub { font-size: 12px; color: var(--text-muted); }
+
+  .panels-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .panel { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; opacity: 0; transform: translateY(6px); transition: opacity 0.3s, transform 0.3s, box-shadow 0.2s; }
+  .panel.loaded { opacity: 1; transform: translateY(0); }
+  .panel:hover { box-shadow: var(--shadow-hover); }
+  .panel-header { padding: 14px 16px; border-bottom: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between; }
+  .panel-title { font-size: 13px; font-weight: 600; color: var(--text); }
+  .badge { background: var(--blue-light); color: var(--blue); font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; }
+  .badge.orange { background: var(--orange-light); color: var(--orange); }
+  .badge.grey { background: var(--bg); color: var(--text-muted); }
+  .panel-body { max-height: 340px; overflow-y: auto; }
+  .panel-body::-webkit-scrollbar { width: 4px; }
+  .panel-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .data-row { display: flex; align-items: center; padding: 10px 16px; border-bottom: 1px solid var(--border-light); gap: 12px; transition: background 0.1s; }
+  .data-row:last-child { border-bottom: none; }
+  .data-row:hover { background: var(--bg); }
+  a.data-row { text-decoration: none; color: inherit; cursor: pointer; }
+  a.data-row:hover { background: var(--blue-light); }
+  a.data-row:hover .row-name { color: var(--blue); }
+  .hs-link { opacity: 0; font-size: 11px; color: var(--blue); flex-shrink: 0; transition: opacity 0.15s; }
+  a.data-row:hover .hs-link { opacity: 1; }
+
+  .row-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--blue-light); color: var(--blue); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; text-transform: uppercase; }
+  .row-main { flex: 1; min-width: 0; }
+  .row-name { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color 0.15s; }
+  .row-sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+  .row-right { text-align: right; flex-shrink: 0; }
+  .row-amount { font-size: 13px; font-weight: 600; color: var(--text); }
+  .deal-stage { display: inline-block; background: var(--blue-light); color: var(--blue); font-size: 10px; font-weight: 500; padding: 1px 6px; border-radius: 3px; }
+
+  .stage-row { display: flex; align-items: center; padding: 8px 16px; border-bottom: 1px solid var(--border-light); gap: 10px; }
+  .stage-row:last-child { border-bottom: none; }
+  .stage-name { flex: 1; font-size: 12px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .stage-count { font-size: 11px; color: var(--text-muted); flex-shrink: 0; width: 30px; text-align: center; }
+  .stage-amount { font-size: 12px; font-weight: 600; color: var(--text); flex-shrink: 0; text-align: right; width: 80px; }
+
+  .empty-state, .loading-state, .error-state { padding: 32px 16px; text-align: center; color: var(--text-muted); font-size: 13px; }
+  .empty-state .icon { font-size: 24px; margin-bottom: 8px; }
+  .error-state { color: var(--red); }
+  .skeleton { display: inline-block; background: linear-gradient(90deg, var(--border-light) 25%, var(--border) 50%, var(--border-light) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 4px; color: transparent; }
+  @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo">Roody</div>
+    <div class="divider"></div>
+    <div class="page-title">Daily Dashboard</div>
+  </div>
+  <div class="topbar-right">
+    <div class="date-controls">
+      <button class="date-btn" id="btn-today" onclick="setMode('today')">Today</button>
+      <span class="date-sep">|</span>
+      <button class="date-btn active" id="btn-yesterday" onclick="setMode('yesterday')">Yesterday</button>
+      <span class="date-sep">|</span>
+      <input type="date" id="custom-date" title="Pick a date"><button class="date-btn" onclick="setMode('custom',document.getElementById('custom-date').value)" style="background:var(--white);border:1px solid var(--border)">Go</button>
+    </div>
+    <div class="status-pill">
+      <span class="dot loading" id="status-dot"></span>
+      <span id="status-text">Loading...</span>
+    </div>
+    <button class="refresh-btn" id="refresh-btn" onclick="loadData()" disabled>↻ Refresh</button>
+  </div>
+</div>
+
+<div class="viewing-banner" id="viewing-banner"></div>
+
+<div class="main">
+  <div class="section-label">Xero — Revenue</div>
+  <div class="kpi-grid">
+    <div class="kpi-card blue" id="kpi-inv-today"><div class="kpi-icon">🧾</div><div class="kpi-label">Invoiced Today</div><div class="kpi-value blue"><span class="skeleton">€000</span></div><div class="kpi-sub"><span class="skeleton">invoiced</span></div></div>
+    <div class="kpi-card orange" id="kpi-inv-week"><div class="kpi-icon">📋</div><div class="kpi-label">Invoiced This Week</div><div class="kpi-value orange"><span class="skeleton">€000</span></div><div class="kpi-sub"><span class="skeleton">week to date</span></div></div>
+    <div class="kpi-card green" id="kpi-inv-month"><div class="kpi-icon">📈</div><div class="kpi-label">Invoiced This Month</div><div class="kpi-value green"><span class="skeleton">€000</span></div><div class="kpi-sub"><span class="skeleton">month to date</span></div></div>
+    <div class="kpi-card" id="kpi-paid-month"><div class="kpi-icon">✅</div><div class="kpi-label">Paid This Month</div><div class="kpi-value"><span class="skeleton">€000</span></div><div class="kpi-sub"><span class="skeleton">collected</span></div></div>
+    <div class="kpi-card" id="kpi-closed-won"><div class="kpi-icon">🏆</div><div class="kpi-label">Closed Won (Month)</div><div class="kpi-value"><span class="skeleton">0</span></div><div class="kpi-sub"><span class="skeleton">deals</span></div></div>
+  </div>
+
+  <div class="section-label">HubSpot — Pipeline</div>
+  <div class="kpi-grid">
+    <div class="kpi-card blue" id="kpi-pipeline-value"><div class="kpi-icon">🔭</div><div class="kpi-label">Pipeline Value</div><div class="kpi-value blue"><span class="skeleton">$000</span></div><div class="kpi-sub"><span class="skeleton">open deals</span></div></div>
+    <div class="kpi-card" id="kpi-deals-today"><div class="kpi-icon">🎯</div><div class="kpi-label">Deals Today</div><div class="kpi-value"><span class="skeleton">0</span></div><div class="kpi-sub"><span class="skeleton">created</span></div></div>
+    <div class="kpi-card orange" id="kpi-deals-week"><div class="kpi-icon">📊</div><div class="kpi-label">Deals This Week</div><div class="kpi-value orange"><span class="skeleton">0</span></div><div class="kpi-sub"><span class="skeleton">created</span></div></div>
+    <div class="kpi-card" id="kpi-deals-month"><div class="kpi-icon">📋</div><div class="kpi-label">Deals This Month</div><div class="kpi-value"><span class="skeleton">0</span></div><div class="kpi-sub"><span class="skeleton">created</span></div></div>
+    <div class="kpi-card green" id="kpi-deals-month-value"><div class="kpi-icon">💰</div><div class="kpi-label">Deal Value (Month)</div><div class="kpi-value green"><span class="skeleton">$000</span></div><div class="kpi-sub"><span class="skeleton">pipeline added</span></div></div>
+  </div>
+
+  <div class="section-label">Activity</div>
+  <div class="panels-grid">
+    <div class="panel" id="panel-paid">
+      <div class="panel-header"><div class="panel-title">Recent Paid Invoices</div><div class="badge" id="count-paid">—</div></div>
+      <div class="panel-body" id="list-paid"><div class="loading-state">Loading...</div></div>
+    </div>
+    <div class="panel" id="panel-leads">
+      <div class="panel-header"><div class="panel-title">Recent HubSpot Deals</div><div class="badge orange" id="count-leads">—</div></div>
+      <div class="panel-body" id="list-leads"><div class="loading-state">Loading...</div></div>
+    </div>
+    <div class="panel" id="panel-pipeline">
+      <div class="panel-header"><div class="panel-title">Pipeline by Stage</div><div class="badge grey" id="count-pipeline">—</div></div>
+      <div class="panel-body" id="list-pipeline"><div class="loading-state">Loading...</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API_URL = '/.netlify/functions/dashboard-data';
+  const API_KEY = 'roody-kpi-agent-2026';
+
+  let currentDate = '';
+
+  function getToday() {
+    return new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Dublin' });
+  }
+
+  function getLastBizDay(from) {
+    const baseStr = from || getToday();
+    const d = new Date(baseStr + 'T12:00:00');
+    d.setDate(d.getDate() - 1);
+    while (d.getDay() === 0 || d.getDay() === 6) d.setDate(d.getDate() - 1);
+    return d.toISOString().split('T')[0];
+  }
+
+  function dayLabel(dateStr) {
+    if (dateStr === getToday()) return 'Today';
+    if (dateStr === getLastBizDay()) return 'Yesterday';
+    const d = new Date(dateStr + 'T00:00:00');
+    return d.toLocaleDateString('en-IE', { weekday: 'short', day: 'numeric', month: 'short' });
+  }
+
+  function setMode(mode, val) {
+    ['today','yesterday'].forEach(m => document.getElementById('btn-' + m)?.classList.remove('active'));
+    if (mode === 'today') {
+      currentDate = getToday();
+      document.getElementById('btn-today').classList.add('active');
+      document.getElementById('custom-date').value = currentDate;
+    } else if (mode === 'yesterday') {
+      currentDate = getLastBizDay();
+      document.getElementById('btn-yesterday').classList.add('active');
+      document.getElementById('custom-date').value = currentDate;
+    } else {
+      currentDate = val;
+      document.getElementById('custom-date').value = val;
+    }
+    loadData();
+  }
+
+  function init() {
+    const today = new Date();
+    if (today.getDay() === 1) document.getElementById('btn-yesterday').textContent = 'Friday';
+    currentDate = getToday();
+    document.getElementById('btn-today').classList.remove('active');
+    document.getElementById('btn-yesterday').classList.remove('active');
+    document.getElementById('btn-today').classList.add('active');
+    document.getElementById('custom-date').value = currentDate;
+  }
+
+  function initials(n) {
+    if (!n) return '?';
+    return n.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+  }
+
+  function fmtEUR(amt) {
+    if (!amt && amt !== 0) return '—';
+    return '€' + Math.round(amt).toLocaleString('en-IE');
+  }
+
+  function fmtUSD(amt) {
+    if (!amt && amt !== 0) return '—';
+    return '$' + Math.round(amt).toLocaleString('en-IE');
+  }
+
+  function fmt(amt, cur) {
+    return cur === 'USD' ? fmtUSD(amt) : cur === 'GBP' ? '£' + Math.round(amt).toLocaleString('en-IE') : fmtEUR(amt);
+  }
+
+  function setStatus(state, msg) {
+    document.getElementById('status-dot').className = 'dot ' + state;
+    document.getElementById('status-text').textContent = msg;
+  }
+
+  function animIn(id, delay) {
+    setTimeout(() => { const e = document.getElementById(id); if(e) e.classList.add('loaded'); }, delay || 0);
+  }
+
+  function renderPaidInvoices(items) {
+    const el = document.getElementById('list-paid');
+    if (!items?.length) { el.innerHTML = '<div class="empty-state"><div class="icon">📭</div>No paid invoices</div>'; return; }
+    el.innerHTML = items.map(inv => `
+      <div class="data-row">
+        <div class="row-avatar">${initials(inv.contact)}</div>
+        <div class="row-main">
+          <div class="row-name">${inv.contact || 'Unknown'}</div>
+          <div class="row-sub">${inv.invoiceNumber || ''} · ${inv.paidDate || ''}</div>
+        </div>
+        <div class="row-right"><div class="row-amount">${fmt(inv.amount, inv.currency)}</div></div>
+      </div>`).join('');
+  }
+
+  function renderDeals(deals) {
+    const el = document.getElementById('list-leads');
+    if (!deals?.length) { el.innerHTML = '<div class="empty-state"><div class="icon">🤷</div>No recent deals</div>'; return; }
+    el.innerHTML = deals.map(d => `
+      <a href="${d.url}" target="_blank" rel="noopener" class="data-row">
+        <div class="row-avatar" style="background:var(--orange-light);color:var(--orange)">${initials(d.name)}</div>
+        <div class="row-main">
+          <div class="row-name">${d.name || 'Untitled'}</div>
+          ${d.stage ? `<div class="row-sub"><span class="deal-stage">${d.stage}</span></div>` : ''}
+        </div>
+        ${d.amount ? `<div class="row-right"><div class="row-amount">${fmtUSD(d.amount)}</div></div>` : ''}
+        <span class="hs-link">↗</span>
+      </a>`).join('');
+  }
+
+  function renderPipeline(byStage, unpaidList) {
+    const el = document.getElementById('list-pipeline');
+    if (unpaidList && unpaidList.length) {
+      el.innerHTML = unpaidList.sort((a,b) => b.amount - a.amount).map(inv => `
+        <div class="data-row">
+          <div class="row-avatar" style="background:${inv.overdue?'var(--red-light)':'var(--blue-light)'};color:${inv.overdue?'var(--red)':'var(--blue)'}">${initials(inv.contact)}</div>
+          <div class="row-main">
+            <div class="row-name">${inv.contact}</div>
+            <div class="row-sub">${inv.number} · Due ${inv.due ? inv.due.slice(0,10) : ''} ${inv.overdue ? '⚠️' : ''}</div>
+          </div>
+          <div class="row-right"><div class="row-amount">$${Math.round(inv.amount).toLocaleString()}</div></div>
+        </div>`).join('');
+      return;
+    }
+    if (!byStage || !Object.keys(byStage).length) { el.innerHTML = '<div class="empty-state"><div class="icon">📊</div>No data</div>'; return; }
+    const stages = Object.entries(byStage).filter(([,v]) => v.count > 0).sort((a,b) => b[1].value - a[1].value);
+    el.innerHTML = stages.map(([name, data]) => `
+      <div class="stage-row">
+        <div class="stage-name">${name}</div>
+        <div class="stage-count">${data.count}</div>
+        <div class="stage-amount">${fmtUSD(data.value)}</div>
+      </div>`).join('');
+  }
+
+  async function loadData() {
+    const btn = document.getElementById('refresh-btn');
+    btn.disabled = true;
+    setStatus('loading', 'Updating...');
+
+    const label = dayLabel(currentDate);
+    const isDefault = currentDate === getToday();
+
+    const banner = document.getElementById('viewing-banner');
+    if (!isDefault) { banner.textContent = `📅 Viewing: ${label}`; banner.classList.add('show'); }
+    else { banner.classList.remove('show'); }
+
+    try {
+      const res = await fetch(`${API_URL}?date=${currentDate}`, { headers: { 'x-api-key': API_KEY } });
+      if (!res.ok) throw new Error('API error ' + res.status);
+      const d = await res.json();
+      if (d.error) throw new Error(d.error);
+
+      // Map API response fields
+      const x = d.xero || {};
+      const hs = d.hubspot || {};
+      const invToday   = x.invoicedToday || 0;
+      const paidToday  = x.paidToday || 0;
+      const invWeek    = x.invoicedThisWeek || 0;
+      const invMonth   = x.invoicedThisMonth || 0;
+      const paidMonth  = x.paidThisMonth || 0;
+      const leadsToday = hs.dealsCreated?.today?.count || 0;
+      const unpaid     = { total: 0, count: 0, invoices: x.recentInvoices || [] };
+      const cur        = 'EUR';
+      const fmtCur     = amt => fmtEUR(amt);
+
+      document.getElementById('kpi-inv-today').innerHTML  = `<div class="kpi-icon">🧾</div><div class="kpi-label">Invoiced ${label}</div><div class="kpi-value blue">${fmtCur(invToday)}</div><div class="kpi-sub">${d.invoiced_yesterday?.count || 0} invoice(s)</div>`;
+      document.getElementById('kpi-inv-week').innerHTML   = `<div class="kpi-icon">📋</div><div class="kpi-label">Invoiced This Week</div><div class="kpi-value orange">${fmtCur(invWeek)}</div><div class="kpi-sub">week to date</div>`;
+      document.getElementById('kpi-inv-month').innerHTML  = `<div class="kpi-icon">📈</div><div class="kpi-label">Invoiced This Month</div><div class="kpi-value green">${fmtCur(invMonth)}</div><div class="kpi-sub">month to date</div>`;
+      document.getElementById('kpi-paid-month').innerHTML = `<div class="kpi-icon">✅</div><div class="kpi-label">Collected This Month</div><div class="kpi-value">${fmtCur(paidMonth)}</div><div class="kpi-sub">collected</div>`;
+      document.getElementById('kpi-closed-won').innerHTML = `<div class="kpi-icon">📬</div><div class="kpi-label">New Leads Yesterday</div><div class="kpi-value">${leadsToday}</div><div class="kpi-sub">new deals</div>`;
+
+      // Unpaid invoices as pipeline proxy
+      document.getElementById('kpi-pipeline-value').innerHTML    = `<div class="kpi-icon">⏳</div><div class="kpi-label">Outstanding</div><div class="kpi-value blue">${fmtCur(unpaid.total || 0)}</div><div class="kpi-sub">${unpaid.count || 0} unpaid invoices</div>`;
+      document.getElementById('kpi-deals-today').innerHTML       = `<div class="kpi-icon">💵</div><div class="kpi-label">Paid Yesterday</div><div class="kpi-value">${fmtCur(paidToday)}</div><div class="kpi-sub">${d.paid_yesterday?.count || 0} payment(s)</div>`;
+      document.getElementById('kpi-deals-week').innerHTML        = `<div class="kpi-icon">📊</div><div class="kpi-label">Collected This Week</div><div class="kpi-value orange">${fmtCur(d.revenue_this_week?.collected || 0)}</div><div class="kpi-sub">week to date</div>`;
+      document.getElementById('kpi-deals-month').innerHTML       = `<div class="kpi-icon">📋</div><div class="kpi-label">Invoiced vs Collected</div><div class="kpi-value">${invMonth > 0 ? Math.round(paidMonth/invMonth*100) : 0}%</div><div class="kpi-sub">collection rate</div>`;
+      document.getElementById('kpi-deals-month-value').innerHTML = `<div class="kpi-icon">🏆</div><div class="kpi-label">Overdue</div><div class="kpi-value green">${fmtCur((unpaid.invoices||[]).filter(i=>i.overdue).reduce((s,i)=>s+i.amount,0))}</div><div class="kpi-sub">${(unpaid.invoices||[]).filter(i=>i.overdue).length} overdue</div>`;
+
+      // Panels
+      document.getElementById('count-paid').textContent     = d.paid_yesterday?.invoices?.length || 0;
+      document.getElementById('count-leads').textContent    = d.leads_yesterday?.deals?.length || 0;
+      document.getElementById('count-pipeline').textContent = unpaid.count || 0;
+
+      renderPaidInvoices(d.paid_yesterday?.invoices?.map(inv => ({contact: inv.contact, invoiceNumber: inv.number, amount: inv.amount, paidDate: ''})) || []);
+      renderDeals((d.leads_yesterday?.deals || []).map(deal => ({name: deal.dealname || deal.name, amount: deal.amount, stage: deal.stage, url: deal.url || '#'})));
+      renderPipeline(null, unpaid.invoices || []);
+
+      ['kpi-inv-today','kpi-inv-week','kpi-inv-month','kpi-paid-month','kpi-closed-won',
+       'kpi-pipeline-value','kpi-deals-today','kpi-deals-week','kpi-deals-month','kpi-deals-month-value']
+        .forEach((id,i) => animIn(id, i*50));
+      ['panel-paid','panel-leads','panel-pipeline'].forEach((id,i) => animIn(id, 500+i*60));
+
+      setStatus('live', 'Updated ' + new Date().toLocaleTimeString('en-IE',{hour:'2-digit',minute:'2-digit'}));
+      btn.disabled = false;
+    } catch(err) {
+      setStatus('error', 'Error loading');
+      console.error(err);
+      document.querySelectorAll('.loading-state').forEach(el => { el.className='error-state'; el.textContent='⚠️ '+err.message; });
+      btn.disabled = false;
+    }
+  }
+
+  const style = document.createElement('style');
+  style.textContent = 'a.data-row{text-decoration:none;color:inherit} a.data-row:hover{background:var(--blue-light)!important} a.data-row:hover .row-name{color:var(--blue)} a.data-row .hs-link{opacity:0;font-size:11px;color:var(--blue);flex-shrink:0;transition:opacity 0.15s} a.data-row:hover .hs-link{opacity:1}';
+  document.head.appendChild(style);
+
+  init();
+  loadData();
+  setInterval(loadData, 5 * 60 * 1000);
+</script>
+</body>
+</html>
