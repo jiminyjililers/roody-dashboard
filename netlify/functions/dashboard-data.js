@@ -1,8 +1,10 @@
 'use strict';
 
 const XERO_CLIENT_ID     = 'B174F48CA0214F40B3571221B4F516A5';
+const SUPABASE_URL       = process.env.SUPABASE_URL;
+const SUPABASE_KEY       = process.env.SUPABASE_SERVICE_KEY;
 const XERO_CLIENT_SECRET = process.env.XERO_CLIENT_SECRET;
-const XERO_REFRESH_TOKEN = process.env.XERO_REFRESH_TOKEN || 'AyXbW9wrTZtX40ofaVrlwUm39EgR39h2bB0WFEFVZaQ';
+// XERO_REFRESH_TOKEN loaded from Supabase at runtime (see xeroRefreshToken function)
 const XERO_TENANT_ID     = process.env.XERO_TENANT_ID;
 const HS_API_KEY         = process.env.HUBSPOT_API_KEY;
 const API_KEY            = process.env.DASHBOARD_API_KEY || 'roody-kpi-agent-2026';
