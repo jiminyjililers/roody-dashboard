@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roody — Revenue Report</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f0f4f8;
+    --white: #ffffff;
+    --border: #e2e8f0;
+    --text: #1a202c;
+    --muted: #718096;
+    --blue: #3182ce;
+    --blue-light: #ebf8ff;
+    --green: #38a169;
+    --green-light: #f0fff4;
+    --orange: #dd6b20;
+    --orange-light: #fffaf0;
+    --red: #e53e3e;
+    --red-light: #fff5f5;
+    --teal: #2c7a7b;
+  }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; min-height: 100vh; }
+  .header { background: var(--white); border-bottom: 1px solid var(--border); height: 56px; display: flex; align-items: center; padding: 0 24px; gap: 12px; position: sticky; top: 0; z-index: 100; }
+  .logo { font-weight: 700; font-size: 18px; color: var(--teal); letter-spacing: -0.5px; }
+  .header-sep { color: var(--border); font-size: 20px; }
+  .header-title { font-size: 15px; font-weight: 500; }
+  .header-tabs { margin-left: auto; display: flex; gap: 4px; }
+  .tab-btn { background: transparent; border: 1px solid var(--border); border-radius: 6px; color: var(--muted); font-size: 13px; padding: 5px 14px; cursor: pointer; text-decoration: none; transition: all 0.15s; display: inline-flex; align-items: center; font-family: inherit; }
+  .tab-btn:hover { border-color: var(--blue); color: var(--blue); }
+  .tab-btn.active { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .status-area { display: flex; align-items: center; gap: 8px; margin-left: 12px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex-shrink: 0; }
+  .dot.loading { background: var(--orange); animation: pulse 1s infinite; }
+  .dot.live { background: var(--green); }
+  .dot.error { background: var(--red); }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  #status-text { font-size: 12px; color: var(--muted); }
+  .page { max-width: 1200px; margin: 0 auto; padding: 24px; }
+  .controls { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; margin-bottom: 20px; display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+  .ctrl-group { display: flex; flex-direction: column; gap: 4px; }
+  .ctrl-group label { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  .ctrl-group input[type="date"] { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-family: inherit; font-size: 13px; padding: 7px 10px; outline: none; transition: border-color 0.2s; cursor: pointer; }
+  .ctrl-group input[type="date"]:focus { border-color: var(--blue); }
+  .presets { display: flex; gap: 6px; flex-wrap: wrap; align-items: flex-end; }
+  .preset-btn { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--muted); font-family: inherit; font-size: 12px; padding: 7px 12px; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .preset-btn:hover, .preset-btn.active { background: var(--blue-light); border-color: var(--blue); color: var(--blue); }
+  .run-btn { background: var(--blue); border: none; border-radius: 6px; color: #fff; font-family: inherit; font-size: 13px; font-weight: 600; padding: 8px 20px; cursor: pointer; transition: opacity 0.15s; margin-left: auto; }
+  .run-btn:hover { opacity: 0.85; }
+  .run-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 20px 0 10px; }
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 4px; }
+  .kpi-card { background: var(--white); border: 1px solid var(--border); border-top: 3px solid var(--border); border-radius: 10px; padding: 16px; }
+  .kpi-card.blue { border-top-color: var(--blue); }
+  .kpi-card.green { border-top-color: var(--green); }
+  .kpi-card.orange { border-top-color: var(--orange); }
+  .kpi-card.red { border-top-color: var(--red); }
+  .kpi-icon { font-size: 20px; margin-bottom: 8px; }
+  .kpi-label { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+  .kpi-value { font-size: 26px; font-weight: 700; line-height: 1; margin-bottom: 4px; }
+  .kpi-value.blue { color: var(--blue); }
+  .kpi-value.green { color: var(--green); }
+  .kpi-value.orange { color: var(--orange); }
+  .kpi-value.red { color: var(--red); }
+  .kpi-sub { font-size: 11px; color: var(--muted); }
+  .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 720px) { .panels { grid-template-columns: 1fr; } }
+  .panel { background: var(--white); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .panel-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid var(--border); }
+  .panel-title { font-size: 13px; font-weight: 600; }
+  .panel-badge { background: var(--blue-light); color: var(--blue); border-radius: 10px; font-size: 11px; font-weight: 700; padding: 2px 8px; }
+  .panel-body { padding: 4px 0; max-height: 400px; overflow-y: auto; }
+  .data-row { display: flex; align-items: center; gap: 12px; padding: 10px 16px; transition: background 0.12s; }
+  .data-row:hover { background: var(--bg); }
+  .row-avatar { width: 34px; height: 34px; border-radius: 8px; background: var(--blue-light); color: var(--blue); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .row-main { flex: 1; min-width: 0; }
+  .row-name { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .row-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .row-right { margin-left: auto; text-align: right; flex-shrink: 0; }
+  .row-amount { font-size: 13px; font-weight: 600; }
+  .empty-state { padding: 32px 16px; text-align: center; color: var(--muted); }
+  .empty-state .icon { font-size: 28px; margin-bottom: 8px; }
+  .copy-panel { background: var(--white); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-top: 16px; }
+  .copy-panel-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid var(--border); }
+  .copy-btn { background: var(--green); border: none; border-radius: 6px; color: #fff; font-family: inherit; font-size: 12px; font-weight: 600; padding: 6px 14px; cursor: pointer; transition: opacity 0.15s; }
+  .copy-btn:hover { opacity: 0.85; }
+  .copy-text { padding: 16px; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px; line-height: 1.7; color: var(--text); white-space: pre-wrap; background: var(--bg); }
+  .report-body { display: none; }
+  .report-body.visible { display: block; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="logo">Roody</span>
+  <span class="header-sep">|</span>
+  <span class="header-title">Revenue Report</span>
+  <div class="header-tabs">
+    <a href="/" class="tab-btn">Dashboard</a>
+    <a class='tab-btn active' href='/report'>Report</a>
+  </div>
+  <div class="status-area">
+    <div class="dot" id="status-dot"></div>
+    <span id="status-text"></span>
+  </div>
+</div>
+
+<div class="page">
+  <div class="controls">
+    <div class="ctrl-group">
+      <label>From</label>
+      <input type="date" id="date-from">
+    </div>
+    <div class="ctrl-group">
+      <label>To</label>
+      <input type="date" id="date-to">
+    </div>
+    <div class="presets">
+      <button class="preset-btn" data-preset="last-week">Last Week</button>
+      <button class="preset-btn" data-preset="this-week">This Week</button>
+      <button class="preset-btn" data-preset="last-month">Last Month</button>
+      <button class="preset-btn" data-preset="this-month">This Month</button>
+      <button class="preset-btn" data-preset="last-quarter">Last Quarter</button>
+      <button class="preset-btn" data-preset="ytd">YTD</button>
+    </div>
+    <button class="run-btn" id="run-btn" onclick="runReport()">Run Report →</button>
+  </div>
+
+  <div class="report-body" id="report-body">
+    <div class="section-label" id="report-period-label"></div>
+    <div class="kpi-grid" id="kpi-grid"></div>
+    <div class="section-label">Activity</div>
+    <div class="panels">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Invoices Raised</div>
+          <div class="panel-badge" id="badge-inv">0</div>
+        </div>
+        <div class="panel-body" id="list-inv"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Payments Received</div>
+          <div class="panel-badge" id="badge-paid">0</div>
+        </div>
+        <div class="panel-body" id="list-paid"></div>
+      </div>
+    </div>
+    <div class="copy-panel">
+      <div class="copy-panel-header">
+        <div class="panel-title">📋 Ninety / EOS Summary</div>
+        <button class="copy-btn" onclick="copyReport()">Copy to clipboard</button>
+      </div>
+      <div class="copy-text" id="copy-text"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API_KEY = 'roody-kpi-agent-2026';
+
+function toIrish(s) {
+  return new Date(s + 'T12:00:00').toLocaleDateString('en-IE', {day:'numeric',month:'short',year:'numeric'});
+}
+function fmt(n, cur) {
+  return (cur==='USD'?'$':cur==='GBP'?'£':'€') + Math.round(n).toLocaleString('en-IE');
+}
+function initials(n) {
+  return n ? n.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase() : '?';
+}
+function today() {
+  return new Date().toLocaleDateString('en-CA', {timeZone:'Europe/Dublin'});
+}
+function addDays(s, n) {
+  const d = new Date(s + 'T12:00:00'); d.setDate(d.getDate()+n);
+  return d.toLocaleDateString('en-CA');
+}
+function setStatus(state, msg) {
+  document.getElementById('status-dot').className = 'dot ' + state;
+  document.getElementById('status-text').textContent = msg;
+}
+
+// Default to last week
+(function() {
+  const t = today(), d = new Date(t+'T12:00:00'), dow = d.getDay();
+  const lm = new Date(d); lm.setDate(d.getDate()-((dow===0?7:dow)+6));
+  const ls = new Date(lm); ls.setDate(lm.getDate()+6);
+  document.getElementById('date-from').value = lm.toLocaleDateString('en-CA');
+  document.getElementById('date-to').value = ls.toLocaleDateString('en-CA');
+  document.querySelector('[data-preset="last-week"]').classList.add('active');
+})();
+
+document.querySelectorAll('.preset-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const t = today(), d = new Date(t+'T12:00:00'), dow = d.getDay();
+    let from, to;
+    switch(btn.dataset.preset) {
+      case 'last-week': {
+        const lm=new Date(d); lm.setDate(d.getDate()-((dow===0?7:dow)+6));
+        const ls=new Date(lm); ls.setDate(lm.getDate()+6);
+        from=lm.toLocaleDateString('en-CA'); to=ls.toLocaleDateString('en-CA'); break;
+      }
+      case 'this-week': {
+        const tm=new Date(d); tm.setDate(d.getDate()-(dow===0?6:dow-1));
+        from=tm.toLocaleDateString('en-CA'); to=t; break;
+      }
+      case 'last-month': {
+        const lm=new Date(d.getFullYear(),d.getMonth()-1,1);
+        const le=new Date(d.getFullYear(),d.getMonth(),0);
+        from=lm.toLocaleDateString('en-CA'); to=le.toLocaleDateString('en-CA'); break;
+      }
+      case 'this-month': from=t.slice(0,8)+'01'; to=t; break;
+      case 'last-quarter': {
+        const q=Math.floor(d.getMonth()/3);
+        const qs=q===0?new Date(d.getFullYear()-1,9,1):new Date(d.getFullYear(),(q-1)*3,1);
+        const qe=new Date(qs.getFullYear(),qs.getMonth()+3,0);
+        from=qs.toLocaleDateString('en-CA'); to=qe.toLocaleDateString('en-CA'); break;
+      }
+      case 'ytd': from=d.getFullYear()+'-01-01'; to=t; break;
+    }
+    document.getElementById('date-from').value = from;
+    document.getElementById('date-to').value = to;
+  });
+});
+
+async function runReport() {
+  const from = document.getElementById('date-from').value;
+  const to   = document.getElementById('date-to').value;
+  if (!from || !to || from > to) return;
+  const btn = document.getElementById('run-btn');
+  btn.disabled = true;
+  setStatus('loading', 'Fetching…');
+  try {
+    const d = await fetch(
+      `/.netlify/functions/dashboard-data?from=${from}&to=${to}`,
+      { headers: { 'x-api-key': API_KEY } }
+    ).then(r => r.json());
+
+    if (d.error) throw new Error(d.error);
+
+    const currency     = d.currency || 'EUR';
+    const allInvoiced  = d.invoiced?.invoices || [];
+    const allPaid      = d.paid?.invoices || [];
+    const totalInvoiced = d.invoiced?.total || 0;
+    const totalPaid     = d.paid?.total || 0;
+    const unpaid = {
+      total: d.outstanding?.total || 0,
+      count: d.outstanding?.count || 0,
+    };
+    const overdueTotal = d.outstanding?.overdue_total || 0;
+    const overdueList  = new Array(d.outstanding?.overdue_count || 0);
+
+    renderReport({from,to,currency,totalInvoiced,totalPaid,allInvoiced,allPaid,unpaid,overdueList,overdueTotal});
+    setStatus('live', `${allInvoiced.length} invoices · ${allPaid.length} payments`);
+  } catch(e) { setStatus('error','Error: '+e.message); }
+  btn.disabled = false;
+}
+
+function renderReport({from,to,currency,totalInvoiced,totalPaid,allInvoiced,allPaid,unpaid,overdueList,overdueTotal}) {
+  document.getElementById('report-body').classList.add('visible');
+  document.getElementById('report-period-label').textContent = `${toIrish(from)} — ${toIrish(to)}`;
+  const f = n => fmt(n, currency);
+  const collRate = totalInvoiced>0 ? Math.round(totalPaid/totalInvoiced*100) : 0;
+
+  document.getElementById('kpi-grid').innerHTML = [
+    {cls:'blue',  icon:'📈', label:'Invoiced',       val:f(totalInvoiced), sub:`${allInvoiced.length} invoice(s)`},
+    {cls:'green', icon:'✅', label:'Collected',       val:f(totalPaid),     sub:`${allPaid.length} payment(s)`},
+    {cls:'',      icon:'📊', label:'Collection Rate', val:collRate+'%',     sub:'invoiced vs collected'},
+    {cls:'',      icon:'⏳', label:'Outstanding',     val:f(unpaid.total||0), sub:`${unpaid.count||0} unpaid`},
+    {cls:'red',   icon:'⚠️', label:'Overdue',         val:f(overdueTotal),  sub:`${overdueList.length} overdue`},
+  ].map(k=>`<div class="kpi-card ${k.cls}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-value ${k.cls}">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+
+  document.getElementById('badge-inv').textContent = allInvoiced.length;
+  document.getElementById('list-inv').innerHTML = allInvoiced.length
+    ? allInvoiced.sort((a,b)=>b.amount-a.amount).map(i=>`<div class="data-row"><div class="row-avatar" style="background:var(--blue-light);color:var(--blue)">${initials(i.contact)}</div><div class="row-main"><div class="row-name">${i.contact}</div><div class="row-sub">${i.number}</div></div><div class="row-right"><div class="row-amount">${fmt(i.amount,currency)}</div></div></div>`).join('')
+    : '<div class="empty-state"><div class="icon">📭</div>No invoices in this period</div>';
+
+  document.getElementById('badge-paid').textContent = allPaid.length;
+  document.getElementById('list-paid').innerHTML = allPaid.length
+    ? allPaid.sort((a,b)=>b.amount-a.amount).map(i=>`<div class="data-row"><div class="row-avatar" style="background:var(--green-light);color:var(--green)">${initials(i.contact)}</div><div class="row-main"><div class="row-name">${i.contact}</div><div class="row-sub">${i.number}</div></div><div class="row-right"><div class="row-amount">${fmt(i.amount,currency)}</div></div></div>`).join('')
+    : '<div class="empty-state"><div class="icon">📭</div>No payments in this period</div>';
+
+  const lines = [
+    `REVENUE UPDATE — ${toIrish(from).toUpperCase()} TO ${toIrish(to).toUpperCase()}`,
+    `${'─'.repeat(52)}`,
+    `Invoiced:          ${f(totalInvoiced)} (${allInvoiced.length} invoice${allInvoiced.length!==1?'s':''})`,
+    `Collected:         ${f(totalPaid)} (${allPaid.length} payment${allPaid.length!==1?'s':''})`,
+    `Collection rate:   ${collRate}%`,
+    ``,
+    `ACCOUNTS RECEIVABLE (as of ${toIrish(to)})`,
+    `Total outstanding: ${f(unpaid.total||0)} (${unpaid.count||0} invoices)`,
+    `Overdue:           ${f(overdueTotal)} (${overdueList.length} invoices)`,
+  ];
+  if (allInvoiced.length) {
+    lines.push('','INVOICED THIS PERIOD');
+    allInvoiced.sort((a,b)=>b.amount-a.amount).forEach(i=>lines.push(`  ${i.contact.substring(0,38).padEnd(38)}  ${fmt(i.amount,currency)}`));
+  }
+  if (allPaid.length) {
+    lines.push('','PAYMENTS RECEIVED');
+    allPaid.sort((a,b)=>b.amount-a.amount).forEach(i=>lines.push(`  ${i.contact.substring(0,38).padEnd(38)}  ${fmt(i.amount,currency)}`));
+  }
+  document.getElementById('copy-text').textContent = lines.join('\n');
+}
+
+function copyReport() {
+  navigator.clipboard.writeText(document.getElementById('copy-text').textContent).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied ✓';
+    setTimeout(()=>btn.textContent='Copy to clipboard', 2000);
+  });
+}
+</script>
+</body>
+</html>
