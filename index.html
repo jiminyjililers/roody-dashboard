@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Roody v2 Ã¢ÂÂ Daily Dashboard</title>
+<title>Roody v2 ÃÂ¢ÃÂÃÂ Daily Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -144,42 +144,42 @@
       <span class="dot loading" id="status-dot"></span>
       <span id="status-text">Loading...</span>
     </div>
-    <button class="refresh-btn" id="refresh-btn" onclick="loadData()" disabled>Ã¢ÂÂ» Refresh</button>
+    <button class="refresh-btn" id="refresh-btn" onclick="loadData()" disabled>ÃÂ¢ÃÂÃÂ» Refresh</button>
   </div>
 </div>
 
 <div class="viewing-banner" id="viewing-banner"></div>
 
 <div class="main">
-  <div class="section-label">Xero Ã¢ÂÂ Revenue</div>
+  <div class="section-label">Xero ÃÂ¢ÃÂÃÂ Revenue</div>
   <div class="kpi-grid">
-    <div class="kpi-card blue" id="kpi-inv-today"><div class="kpi-icon">Ã°ÂÂ§Â¾</div><div class="kpi-label">Invoiced Today</div><div class="kpi-value blue"><span class="skeleton">Ã¢ÂÂ¬000</span></div><div class="kpi-sub"><span class="skeleton">invoiced</span></div></div>
-    <div class="kpi-card orange" id="kpi-inv-week"><div class="kpi-icon">Ã°ÂÂÂ</div><div class="kpi-label">Invoiced This Week</div><div class="kpi-value orange"><span class="skeleton">Ã¢ÂÂ¬000</span></div><div class="kpi-sub"><span class="skeleton">week to date</span></div></div>
-    <div class="kpi-card green" id="kpi-inv-month"><div class="kpi-icon">Ã°ÂÂÂ</div><div class="kpi-label">Invoiced This Month</div><div class="kpi-value green"><span class="skeleton">Ã¢ÂÂ¬000</span></div><div class="kpi-sub"><span class="skeleton">month to date</span></div></div>
-    <div class="kpi-card" id="kpi-paid-month"><div class="kpi-icon">Ã¢ÂÂ</div><div class="kpi-label">Paid This Month</div><div class="kpi-value"><span class="skeleton">Ã¢ÂÂ¬000</span></div><div class="kpi-sub"><span class="skeleton">collected</span></div></div>
+    <div class="kpi-card blue" id="kpi-inv-today"><div class="kpi-icon">ÃÂ°ÃÂÃÂ§ÃÂ¾</div><div class="kpi-label">Invoiced Today</div><div class="kpi-value blue"><span class="skeleton">ÃÂ¢ÃÂÃÂ¬000</span></div><div class="kpi-sub"><span class="skeleton">invoiced</span></div></div>
+    <div class="kpi-card orange" id="kpi-inv-week"><div class="kpi-icon">ÃÂ°ÃÂÃÂÃÂ</div><div class="kpi-label">Invoiced This Week</div><div class="kpi-value orange"><span class="skeleton">ÃÂ¢ÃÂÃÂ¬000</span></div><div class="kpi-sub"><span class="skeleton">week to date</span></div></div>
+    <div class="kpi-card green" id="kpi-inv-month"><div class="kpi-icon">ÃÂ°ÃÂÃÂÃÂ</div><div class="kpi-label">Invoiced This Month</div><div class="kpi-value green"><span class="skeleton">ÃÂ¢ÃÂÃÂ¬000</span></div><div class="kpi-sub"><span class="skeleton">month to date</span></div></div>
+    <div class="kpi-card" id="kpi-paid-month"><div class="kpi-icon">🤝</div><div class="kpi-label">Deals This Week</div><div class="kpi-value"><span class="skeleton">0</span></div><div class="kpi-sub"><span class="skeleton">new deals</span></div></div><div class="kpi-sub"><span class="skeleton">collected</span></div></div>
     </div>
   </div>
 
-  <div class="section-label">HubSpot Ã¢ÂÂ Pipeline</div>
+  <div class="section-label">HubSpot ÃÂ¢ÃÂÃÂ Pipeline</div>
   <div class="kpi-grid">
-    <div class="kpi-card" id="kpi-deals-today"><div class="kpi-icon">Ã°ÂÂÂ¯</div><div class="kpi-label">Deals Today</div><div class="kpi-value"><span class="skeleton">0</span></div><div class="kpi-sub"><span class="skeleton">created</span></div></div>
-    <div class="kpi-card orange" id="kpi-deals-week"><div class="kpi-icon">Ã°ÂÂÂ</div><div class="kpi-label">Deals This Week</div><div class="kpi-value orange"><span class="skeleton">0</span></div><div class="kpi-sub"><span class="skeleton">created</span></div></div>
-    <div class="kpi-card" id="kpi-deals-month"><div class="kpi-icon">Ã°ÂÂÂ</div><div class="kpi-label">Deals This Month</div><div class="kpi-value"><span class="skeleton">0</span></div><div class="kpi-sub"><span class="skeleton">created</span></div></div>
+    <div class="kpi-card" id="kpi-deals-today"><div class="kpi-icon">ÃÂ°ÃÂÃÂÃÂ¯</div><div class="kpi-label">Deals Today</div><div class="kpi-value"><span class="skeleton">0</span></div><div class="kpi-sub"><span class="skeleton">created</span></div></div>
+    <div class="kpi-card orange" id="kpi-deals-week"><div class="kpi-icon">ÃÂ°ÃÂÃÂÃÂ</div><div class="kpi-label">Deals This Week</div><div class="kpi-value orange"><span class="skeleton">0</span></div><div class="kpi-sub"><span class="skeleton">created</span></div></div>
+    <div class="kpi-card" id="kpi-deals-month"><div class="kpi-icon">ÃÂ°ÃÂÃÂÃÂ</div><div class="kpi-label">Deals This Month</div><div class="kpi-value"><span class="skeleton">0</span></div><div class="kpi-sub"><span class="skeleton">created</span></div></div>
     </div>
   </div>
 
   <div class="section-label">Activity</div>
   <div class="panels-grid">
     <div class="panel" id="panel-paid">
-      <div class="panel-header"><div class="panel-title">Recent Paid Invoices</div><div class="badge" id="count-paid">Ã¢ÂÂ</div></div>
+      <div class="panel-header"><div class="panel-title">Recent Paid Invoices</div><div class="badge" id="count-paid">ÃÂ¢ÃÂÃÂ</div></div>
       <div class="panel-body" id="list-paid"><div class="loading-state">Loading...</div></div>
     </div>
     <div class="panel" id="panel-leads">
-      <div class="panel-header"><div class="panel-title">Recent HubSpot Deals</div><div class="badge orange" id="count-leads">Ã¢ÂÂ</div></div>
+      <div class="panel-header"><div class="panel-title">Recent HubSpot Deals</div><div class="badge orange" id="count-leads">ÃÂ¢ÃÂÃÂ</div></div>
       <div class="panel-body" id="list-leads"><div class="loading-state">Loading...</div></div>
     </div>
     <div class="panel" id="panel-pipeline">
-      <div class="panel-header"><div class="panel-title">Pipeline by Stage</div><div class="badge grey" id="count-pipeline">Ã¢ÂÂ</div></div>
+      <div class="panel-header"><div class="panel-title">Pipeline by Stage</div><div class="badge grey" id="count-pipeline">ÃÂ¢ÃÂÃÂ</div></div>
       <div class="panel-body" id="list-pipeline"><div class="loading-state">Loading...</div></div>
     </div>
   </div>
@@ -243,17 +243,17 @@
   }
 
   function fmtEUR(amt) {
-    if (!amt && amt !== 0) return 'Ã¢ÂÂ';
-    return 'Ã¢ÂÂ¬' + Math.round(amt).toLocaleString('en-IE');
+    if (!amt && amt !== 0) return 'ÃÂ¢ÃÂÃÂ';
+    return 'ÃÂ¢ÃÂÃÂ¬' + Math.round(amt).toLocaleString('en-IE');
   }
 
   function fmtUSD(amt) {
-    if (!amt && amt !== 0) return 'Ã¢ÂÂ';
+    if (!amt && amt !== 0) return 'ÃÂ¢ÃÂÃÂ';
     return '$' + Math.round(amt).toLocaleString('en-IE');
   }
 
   function fmt(amt, cur) {
-    return cur === 'USD' ? fmtUSD(amt) : cur === 'GBP' ? 'ÃÂ£' + Math.round(amt).toLocaleString('en-IE') : fmtEUR(amt);
+    return cur === 'USD' ? fmtUSD(amt) : cur === 'GBP' ? 'ÃÂÃÂ£' + Math.round(amt).toLocaleString('en-IE') : fmtEUR(amt);
   }
 
   function setStatus(state, msg) {
@@ -267,13 +267,13 @@
 
   function renderPaidInvoices(items) {
     const el = document.getElementById('list-paid');
-    if (!items?.length) { el.innerHTML = '<div class="empty-state"><div class="icon">Ã°ÂÂÂ­</div>No paid invoices</div>'; return; }
+    if (!items?.length) { el.innerHTML = '<div class="empty-state"><div class="icon">ÃÂ°ÃÂÃÂÃÂ­</div>No paid invoices</div>'; return; }
     el.innerHTML = items.map(inv => `
       <div class="data-row">
         <div class="row-avatar">${initials(inv.contact)}</div>
         <div class="row-main">
           <div class="row-name">${inv.contact || 'Unknown'}</div>
-          <div class="row-sub">${inv.invoiceNumber || ''} ÃÂ· ${inv.paidDate || ''}</div>
+          <div class="row-sub">${inv.invoiceNumber || ''} ÃÂÃÂ· ${inv.paidDate || ''}</div>
         </div>
         <div class="row-right"><div class="row-amount">${fmt(inv.amount, inv.currency)}</div></div>
       </div>`).join('');
@@ -281,7 +281,7 @@
 
   function renderDeals(deals) {
     const el = document.getElementById('list-leads');
-    if (!deals?.length) { el.innerHTML = '<div class="empty-state"><div class="icon">Ã°ÂÂ¤Â·</div>No recent deals</div>'; return; }
+    if (!deals?.length) { el.innerHTML = '<div class="empty-state"><div class="icon">ÃÂ°ÃÂÃÂ¤ÃÂ·</div>No recent deals</div>'; return; }
     el.innerHTML = deals.map(d => `
       <a href="${d.url}" target="_blank" rel="noopener" class="data-row">
         <div class="row-avatar" style="background:var(--orange-light);color:var(--orange)">${initials(d.name)}</div>
@@ -290,7 +290,7 @@
           ${d.stage ? `<div class="row-sub"><span class="deal-stage">${d.stage}</span></div>` : ''}
         </div>
         ${d.amount ? `<div class="row-right"><div class="row-amount">${fmtUSD(d.amount)}</div></div>` : ''}
-        <span class="hs-link">Ã¢ÂÂ</span>
+        <span class="hs-link">ÃÂ¢ÃÂÃÂ</span>
       </a>`).join('');
   }
 
@@ -302,13 +302,13 @@
           <div class="row-avatar" style="background:${inv.overdue?'var(--red-light)':'var(--blue-light)'};color:${inv.overdue?'var(--red)':'var(--blue)'}">${initials(inv.contact)}</div>
           <div class="row-main">
             <div class="row-name">${inv.contact}</div>
-            <div class="row-sub">${inv.number} ÃÂ· Due ${inv.due ? inv.due.slice(0,10) : ''} ${inv.overdue ? 'Ã¢ÂÂ Ã¯Â¸Â' : ''}</div>
+            <div class="row-sub">${inv.number} ÃÂÃÂ· Due ${inv.due ? inv.due.slice(0,10) : ''} ${inv.overdue ? 'ÃÂ¢ÃÂÃÂ ÃÂ¯ÃÂ¸ÃÂ' : ''}</div>
           </div>
           <div class="row-right"><div class="row-amount">$${Math.round(inv.amount).toLocaleString()}</div></div>
         </div>`).join('');
       return;
     }
-    if (!byStage || !Object.keys(byStage).length) { el.innerHTML = '<div class="empty-state"><div class="icon">Ã°ÂÂÂ</div>No data</div>'; return; }
+    if (!byStage || !Object.keys(byStage).length) { el.innerHTML = '<div class="empty-state"><div class="icon">ÃÂ°ÃÂÃÂÃÂ</div>No data</div>'; return; }
     const stages = Object.entries(byStage).filter(([,v]) => v.count > 0).sort((a,b) => b[1].value - a[1].value);
     el.innerHTML = stages.map(([name, data]) => `
       <div class="stage-row">
@@ -327,7 +327,7 @@
     const isDefault = currentDate === getToday();
 
     const banner = document.getElementById('viewing-banner');
-    if (!isDefault) { banner.textContent = `Ã°ÂÂÂ Viewing: ${label}`; banner.classList.add('show'); }
+    if (!isDefault) { banner.textContent = `ÃÂ°ÃÂÃÂÃÂ Viewing: ${label}`; banner.classList.add('show'); }
     else { banner.classList.remove('show'); }
 
     try {
@@ -349,18 +349,18 @@
       const cur        = 'EUR';
       const fmtCur     = amt => fmtEUR(amt);
 
-      document.getElementById('kpi-inv-today').innerHTML  = `<div class="kpi-icon">Ã°ÂÂ§Â¾</div><div class="kpi-label">Invoiced ${label}</div><div class="kpi-value blue">${fmtCur(invToday)}</div><div class="kpi-sub">${d.invoiced_yesterday?.count || 0} invoice(s)</div>`;
-      document.getElementById('kpi-inv-week').innerHTML   = `<div class="kpi-icon">Ã°ÂÂÂ</div><div class="kpi-label">Invoiced This Week</div><div class="kpi-value orange">${fmtCur(invWeek)}</div><div class="kpi-sub">week to date</div>`;
-      document.getElementById('kpi-inv-month').innerHTML  = `<div class="kpi-icon">Ã°ÂÂÂ</div><div class="kpi-label">Invoiced This Month</div><div class="kpi-value green">${fmtCur(invMonth)}</div><div class="kpi-sub">month to date</div>`;
-      document.getElementById('kpi-paid-month').innerHTML = `<div class="kpi-icon">Ã¢ÂÂ</div><div class="kpi-label">Collected This Month</div><div class="kpi-value">${fmtCur(paidMonth)}</div><div class="kpi-sub">collected</div>`;
-      document.getElementById('kpi-closed-won').innerHTML = `<div class="kpi-icon">Ã°ÂÂÂ¬</div><div class="kpi-label">New Leads Yesterday</div><div class="kpi-value">${leadsToday}</div><div class="kpi-sub">new deals</div>`;
+      document.getElementById('kpi-inv-today').innerHTML  = `<div class="kpi-icon">ÃÂ°ÃÂÃÂ§ÃÂ¾</div><div class="kpi-label">Invoiced ${label}</div><div class="kpi-value blue">${fmtCur(invToday)}</div><div class="kpi-sub">${d.invoiced_yesterday?.count || 0} invoice(s)</div>`;
+      document.getElementById('kpi-inv-week').innerHTML   = `<div class="kpi-icon">ÃÂ°ÃÂÃÂÃÂ</div><div class="kpi-label">Invoiced This Week</div><div class="kpi-value orange">${fmtCur(invWeek)}</div><div class="kpi-sub">week to date</div>`;
+      document.getElementById('kpi-inv-month').innerHTML  = `<div class="kpi-icon">ÃÂ°ÃÂÃÂÃÂ</div><div class="kpi-label">Invoiced This Month</div><div class="kpi-value green">${fmtCur(invMonth)}</div><div class="kpi-sub">month to date</div>`;
+      document.getElementById('kpi-paid-month').innerHTML  = `<div class="kpi-icon">🤝</div><div class="kpi-label">Deals This Week</div><div class="kpi-value">${d.hubspot?.dealsCreated?.thisWeek?.count || 0}</div><div class="kpi-sub">this week</div>`;
+      document.getElementById('kpi-closed-won').innerHTML = `<div class="kpi-icon">ÃÂ°ÃÂÃÂÃÂ¬</div><div class="kpi-label">New Leads Yesterday</div><div class="kpi-value">${leadsToday}</div><div class="kpi-sub">new deals</div>`;
 
       // Unpaid invoices as pipeline proxy
-      document.getElementById('kpi-pipeline-value').innerHTML    = `<div class="kpi-icon">Ã¢ÂÂ³</div><div class="kpi-label">Outstanding</div><div class="kpi-value blue">${fmtCur(unpaid.total || 0)}</div><div class="kpi-sub">${unpaid.count || 0} unpaid invoices</div>`;
-      document.getElementById('kpi-deals-today').innerHTML       = `<div class="kpi-icon">Ã°ÂÂÂµ</div><div class="kpi-label">Paid Yesterday</div><div class="kpi-value">${fmtCur(paidToday)}</div><div class="kpi-sub">${d.paid_yesterday?.count || 0} payment(s)</div>`;
-      document.getElementById('kpi-deals-week').innerHTML        = `<div class="kpi-icon">Ã°ÂÂÂ</div><div class="kpi-label">Collected This Week</div><div class="kpi-value orange">${fmtCur(d.revenue_this_week?.collected || 0)}</div><div class="kpi-sub">week to date</div>`;
-      document.getElementById('kpi-deals-month').innerHTML       = `<div class="kpi-icon">Ã°ÂÂÂ</div><div class="kpi-label">Invoiced vs Collected</div><div class="kpi-value">${invMonth > 0 ? Math.round(paidMonth/invMonth*100) : 0}%</div><div class="kpi-sub">collection rate</div>`;
-      document.getElementById('kpi-deals-month-value').innerHTML = `<div class="kpi-icon">Ã°ÂÂÂ</div><div class="kpi-label">Overdue</div><div class="kpi-value green">${fmtCur((unpaid.invoices||[]).filter(i=>i.overdue).reduce((s,i)=>s+i.amount,0))}</div><div class="kpi-sub">${(unpaid.invoices||[]).filter(i=>i.overdue).length} overdue</div>`;
+      document.getElementById('kpi-pipeline-value').innerHTML    = `<div class="kpi-icon">ÃÂ¢ÃÂÃÂ³</div><div class="kpi-label">Outstanding</div><div class="kpi-value blue">${fmtCur(unpaid.total || 0)}</div><div class="kpi-sub">${unpaid.count || 0} unpaid invoices</div>`;
+      document.getElementById('kpi-deals-today').innerHTML       = `<div class="kpi-icon">ÃÂ°ÃÂÃÂÃÂµ</div><div class="kpi-label">Paid Yesterday</div><div class="kpi-value">${fmtCur(paidToday)}</div><div class="kpi-sub">${d.paid_yesterday?.count || 0} payment(s)</div>`;
+      document.getElementById('kpi-deals-week').innerHTML  = `<div class="kpi-icon">📊</div><div class="kpi-label">Deals This Month</div><div class="kpi-value orange">${d.hubspot?.dealsCreated?.thisMonth?.count || 0}</div><div class="kpi-sub">this month</div>`;
+      document.getElementById('kpi-deals-month').innerHTML = `<div class="kpi-icon">💼</div><div class="kpi-label">Deals Today</div><div class="kpi-value">${d.hubspot?.dealsCreated?.today?.count || 0}</div><div class="kpi-sub">new deals</div>`;
+      document.getElementById('kpi-deals-month-value').innerHTML = `<div class="kpi-icon">ÃÂ°ÃÂÃÂÃÂ</div><div class="kpi-label">Overdue</div><div class="kpi-value green">${fmtCur((unpaid.invoices||[]).filter(i=>i.overdue).reduce((s,i)=>s+i.amount,0))}</div><div class="kpi-sub">${(unpaid.invoices||[]).filter(i=>i.overdue).length} overdue</div>`;
 
       // Panels
       document.getElementById('count-paid').textContent     = d.paid_yesterday?.invoices?.length || 0;
@@ -381,7 +381,7 @@
     } catch(err) {
       setStatus('error', 'Error loading');
       console.error(err);
-      document.querySelectorAll('.loading-state').forEach(el => { el.className='error-state'; el.textContent='Ã¢ÂÂ Ã¯Â¸Â '+err.message; });
+      document.querySelectorAll('.loading-state').forEach(el => { el.className='error-state'; el.textContent='ÃÂ¢ÃÂÃÂ ÃÂ¯ÃÂ¸ÃÂ '+err.message; });
       btn.disabled = false;
     }
   }
