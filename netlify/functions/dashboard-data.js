@@ -2,7 +2,7 @@
 
 const XERO_CLIENT_ID     = 'B174F48CA0214F40B3571221B4F516A5';
 const XERO_CLIENT_SECRET = process.env.XERO_CLIENT_SECRET;
-const XERO_REFRESH_TOKEN = process.env.XERO_REFRESH_TOKEN;
+const XERO_REFRESH_TOKEN = process.env.XERO_REFRESH_TOKEN || 'vDeq2tXoU0xeC6ybo5C2Vh82rHNbMn6ZFI2HzvWVk5E';
 const XERO_TENANT_ID     = process.env.XERO_TENANT_ID;
 const HS_API_KEY         = process.env.HUBSPOT_API_KEY;
 const API_KEY            = process.env.DASHBOARD_API_KEY || 'roody-kpi-agent-2026';
